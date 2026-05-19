@@ -1,10 +1,10 @@
 # Snowflake Connector
 
-A Streamlit application for establishing and testing a connection to Snowflake. Protected by Auth0 OIDC login and uses key-pair authentication for Snowflake. Designed to be deployed on [Streamlit Community Cloud](https://streamlit.io/cloud).
+A Streamlit application for establishing and testing a connection to Snowflake. Protected by Okta OIDC login and uses key-pair authentication for Snowflake. Designed to be deployed on [Streamlit Community Cloud](https://streamlit.io/cloud).
 
 ## Features
 
-- Auth0 OIDC login gate — only authenticated users can access the app
+- Okta OIDC login gate — only authenticated users can access the app
 - Input form for Snowflake connection parameters (account, warehouse, database, schema, role)
 - Key-pair authentication for Snowflake — no passwords stored
 - On successful connection, displays current user, role, warehouse, database, schema, and Snowflake version
@@ -12,18 +12,19 @@ A Streamlit application for establishing and testing a connection to Snowflake. 
 ## Requirements
 
 - Python 3.8+
-- An [Auth0](https://auth0.com) account (free tier works)
+- An Okta account with an OIDC application configured
 - A Snowflake account with key-pair authentication configured for your user
 
 ---
 
-## Auth0 Setup
+## Okta Setup
 
-1. In Auth0, create a new **Regular Web Application**
-2. Under **Allowed Callback URLs**, add:
+1. In the Okta Admin Console, go to **Applications → Create App Integration**
+2. Select **OIDC - OpenID Connect** as the sign-in method and **Web Application** as the app type
+3. Under **Sign-in redirect URIs**, add:
    - Local: `http://localhost:8501/oauth2callback`
    - Cloud: `https://<your-app>.streamlit.app/oauth2callback`
-3. Note your **Client ID**, **Client Secret**, and **Domain** (`<tenant>.auth0.com`)
+4. Note your **Client ID**, **Client Secret**, and **Okta domain** (`<tenant>.okta.com`)
 
 ---
 
@@ -62,7 +63,7 @@ ALTER USER your_username SET RSA_PUBLIC_KEY='<contents of rsa_key.pub, header/fo
    pip install -r requirements.txt
    ```
 
-3. **Configure Auth0 credentials** — copy `.env.example` to `.env` and fill in your values:
+3. **Configure Okta credentials** — copy `.env.example` to `.env` and fill in your values:
 
    ```bash
    cp .env.example .env
@@ -71,9 +72,9 @@ ALTER USER your_username SET RSA_PUBLIC_KEY='<contents of rsa_key.pub, header/fo
    ```ini
    REDIRECT_URI=http://localhost:8501/oauth2callback
    COOKIE_SECRET=<generate with: python -c "import secrets; print(secrets.token_hex(32))">
-   CLIENT_ID=<Auth0 Client ID>
-   CLIENT_SECRET=<Auth0 Client Secret>
-   AUTH0_METADATA_URL=https://<tenant>.auth0.com/.well-known/openid-configuration
+   CLIENT_ID=<Okta Client ID>
+   CLIENT_SECRET=<Okta Client Secret>
+   OKTA_METADATA_URL=https://<your-tenant>.okta.com/.well-known/openid-configuration
    ```
 
 4. **Configure Snowflake credentials** — copy `.streamlit/secrets.toml.example` to `.streamlit/secrets.toml` and fill in your values (only the `[snowflake]` section is needed locally):
@@ -114,4 +115,4 @@ ALTER USER your_username SET RSA_PUBLIC_KEY='<contents of rsa_key.pub, header/fo
 | `streamlit` | Web app framework |
 | `snowflake-connector-python` | Snowflake Python connector |
 | `cryptography` | RSA private key parsing |
-| `python-dotenv` | Load Auth0 config from `.env` locally |
+| `python-dotenv` | Load Okta config from `.env` locally |

@@ -24,10 +24,10 @@ def load_auth_config():
         "auth": {
             "redirect_uri": redirect_uri,
             "cookie_secret": os.getenv("COOKIE_SECRET"),
-            "auth0": {
+            "okta": {
                 "client_id":           os.getenv("CLIENT_ID"),
                 "client_secret":       os.getenv("CLIENT_SECRET"),
-                "server_metadata_url": os.getenv("AUTH0_METADATA_URL"),
+                "server_metadata_url": os.getenv("OKTA_METADATA_URL"),
                 "client_kwargs":       {"prompt": "login"},
             },
         }
@@ -46,8 +46,8 @@ st.set_page_config(page_title="Snowflake Connection Test", layout="centered")
 
 if not st.experimental_user.is_logged_in:
     st.title("Snowflake Connection Test")
-    st.markdown("Please log in with your Auth0 account to continue.")
-    st.button("Log in", on_click=st.login, args=("auth0",))
+    st.markdown("Please log in with your Okta account to continue.")
+    st.button("Log in", on_click=st.login, args=("okta",))
     st.stop()
 
 user = st.experimental_user
